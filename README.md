@@ -293,12 +293,12 @@ docker run -p 8081:8081 spring-boot-lecture
 
 ## 📚 문서
 
-- [개발 가이드](DEVELOPMENT_GUIDE.md) - 상세한 개발 가이드
-- [빌드 및 실행 가이드](BUILD_AND_RUN_GUIDE.md) - 빌드 및 실행 방법
-- [환경 설정 가이드](ENVIRONMENT_SETUP_GUIDE.md) - 환경별 설정 방법
-- [CORS 설정 가이드](CORS_SETUP.md) - CORS 설정 방법
-- [Spring Boot 핵심 스펙](SPRING_BOOT_CORE_SPEC.md) - 핵심 기능 스펙
-- [프로젝트 구조](README_NEW_STRUCTURE.md) - 상세한 프로젝트 구조
+- [개발 가이드](docs/DEVELOPMENT_GUIDE.md) - 상세한 개발 가이드
+- [빌드 및 실행 가이드](docs/BUILD_AND_RUN_GUIDE.md) - 빌드 및 실행 방법
+- [환경 설정 가이드](docs/ENVIRONMENT_SETUP_GUIDE.md) - 환경별 설정 방법
+- [CORS 설정 가이드](docs/CORS_SETUP.md) - CORS 설정 방법
+- [Spring Boot 핵심 스펙](docs/SPRING_BOOT_CORE_SPEC.md) - 핵심 기능 스펙
+- [프로젝트 구조](docs/README_NEW_STRUCTURE.md) - 상세한 프로젝트 구조
 
 ## 🔍 Swagger UI 사용법
 
