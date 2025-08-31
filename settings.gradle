@@ -1,1 +1,8 @@
-rootProject.name = 'helloboot'
+rootProject.name = 'spring-boot-lecture'
+
+include 'common'
+include 'database'
+include 'shared-lib'
+include 'projects:mobile-api'
+include 'projects:web-api'
+include 'projects:admin-api'
