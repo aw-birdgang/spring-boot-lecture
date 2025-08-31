@@ -1,8 +1,8 @@
 package birdgang.spring.lecture.common;
 
 import birdgang.spring.lecture.common.controller.HelloController;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,19 +10,16 @@ class HelloControllerTests {
     @Test
     void simpleHelloController() {
         HelloController helloController = new HelloController(name -> name);
-        String ret = helloController.hello("Test");
-        assertThat(ret).isEqualTo("Test");
+        ResponseEntity<String> response = helloController.hello("Test");
+        assertThat(response.getBody()).isEqualTo("Test");
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
     }
 
     @Test
-    void falseSimpleHelloController() {
+    void helloWithEmptyName() {
         HelloController helloController = new HelloController(name -> name);
-        Assertions.assertThatThrownBy(() -> {
-            String ret = helloController.hello(null);
-        }).isInstanceOf(IllegalArgumentException.class);
-
-        Assertions.assertThatThrownBy(() -> {
-            String ret = helloController.hello("");
-        }).isInstanceOf(IllegalArgumentException.class);
+        ResponseEntity<String> response = helloController.hello(""); // 빈 문자열은 validation에서 처리됨
+        assertThat(response.getBody()).isEqualTo("");
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
     }
 }

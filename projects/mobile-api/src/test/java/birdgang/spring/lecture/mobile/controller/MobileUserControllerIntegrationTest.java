@@ -1,7 +1,10 @@
 package birdgang.spring.lecture.mobile.controller;
 
+import birdgang.spring.lecture.database.entity.User;
+import birdgang.spring.lecture.database.repository.UserRepository;
 import birdgang.spring.lecture.shared.dto.UserDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
@@ -26,11 +29,25 @@ class MobileUserControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        
+        // 테스트 데이터 정리
+        userRepository.deleteAll();
+        
+        // 테스트용 사용자 생성
+        User existingUser = new User("existinguser", "existing@example.com", "password123", "Existing User");
+        userRepository.save(existingUser);
+    }
 
     @Test
     void contextLoads() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         assert mockMvc != null;
     }
 

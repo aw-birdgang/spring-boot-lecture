@@ -1,12 +1,15 @@
 package birdgang.spring.lecture.web.service.impl;
 
 import birdgang.spring.lecture.shared.dto.UserDto;
+import birdgang.spring.lecture.shared.util.UserMapper;
 import birdgang.spring.lecture.database.entity.User;
 import birdgang.spring.lecture.database.repository.UserRepository;
 import birdgang.spring.lecture.web.service.WebUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import birdgang.spring.lecture.common.exception.DuplicateResourceException;
+import birdgang.spring.lecture.common.exception.ResourceNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,33 +21,37 @@ import java.util.stream.Collectors;
 public class WebUserServiceImpl implements WebUserService {
     
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     
-    @Autowired
-    public WebUserServiceImpl(UserRepository userRepository) {
+    public WebUserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     
     @Override
     public UserDto.Response createUser(UserDto.CreateRequest request) {
         // 중복 검사
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new IllegalArgumentException("이미 존재하는 사용자명입니다: " + request.getUsername());
+            throw new DuplicateResourceException("User", "username", request.getUsername());
         }
         
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("이미 존재하는 이메일입니다: " + request.getEmail());
+            throw new DuplicateResourceException("User", "email", request.getEmail());
         }
         
-        // 웹 사용자 생성 (추가 검증 로직 포함)
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        
+        // 웹 사용자 생성
         User user = new User(
             request.getUsername(),
             request.getEmail(),
-            request.getPassword(), // 실제로는 비밀번호 암호화 필요
+            encodedPassword,
             request.getFullName()
         );
         
         User savedUser = userRepository.save(user);
-        return convertToResponse(savedUser);
+        return UserMapper.toResponse(savedUser);
     }
     
     @Override
@@ -52,8 +59,8 @@ public class WebUserServiceImpl implements WebUserService {
     @Cacheable(value = "webUser", key = "#id")
     public UserDto.Response getUserById(Long id) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + id));
-        return convertToResponse(user);
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        return UserMapper.toResponse(user);
     }
     
     @Override
@@ -61,8 +68,8 @@ public class WebUserServiceImpl implements WebUserService {
     @Cacheable(value = "webUserByUsername", key = "#username")
     public UserDto.Response getUserByUsername(String username) {
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + username));
-        return convertToResponse(user);
+            .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        return UserMapper.toResponse(user);
     }
     
     @Override
@@ -70,7 +77,7 @@ public class WebUserServiceImpl implements WebUserService {
     @Cacheable(value = "webAllUsers")
     public List<UserDto.Response> getAllUsers() {
         return userRepository.findAll().stream()
-            .map(this::convertToResponse)
+            .map(UserMapper::toResponse)
             .collect(Collectors.toList());
     }
     
@@ -78,29 +85,27 @@ public class WebUserServiceImpl implements WebUserService {
     @CacheEvict(value = {"webUser", "webUserByUsername", "webAllUsers"}, allEntries = true)
     public UserDto.Response updateUser(Long id, UserDto.UpdateRequest request) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
         
         // 이메일 중복 검사 (다른 사용자와 중복되지 않도록)
         if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
             if (userRepository.existsByEmail(request.getEmail())) {
-                throw new IllegalArgumentException("이미 존재하는 이메일입니다: " + request.getEmail());
+                throw new DuplicateResourceException("User", "email", request.getEmail());
             }
-            user.setEmail(request.getEmail());
         }
         
-        if (request.getFullName() != null) {
-            user.setFullName(request.getFullName());
-        }
+        // 엔티티 업데이트
+        UserMapper.updateEntityFromRequest(user, request);
         
         User updatedUser = userRepository.save(user);
-        return convertToResponse(updatedUser);
+        return UserMapper.toResponse(updatedUser);
     }
     
     @Override
     @CacheEvict(value = {"webUser", "webUserByUsername", "webAllUsers"}, allEntries = true)
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new IllegalArgumentException("사용자를 찾을 수 없습니다: " + id);
+            throw new ResourceNotFoundException("User", "id", id);
         }
         userRepository.deleteById(id);
     }
@@ -115,17 +120,5 @@ public class WebUserServiceImpl implements WebUserService {
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
-    }
-    
-    // User 엔티티를 Response DTO로 변환
-    private UserDto.Response convertToResponse(User user) {
-        UserDto.Response response = new UserDto.Response();
-        response.setId(user.getId());
-        response.setUsername(user.getUsername());
-        response.setEmail(user.getEmail());
-        response.setFullName(user.getFullName());
-        response.setCreatedAt(user.getCreatedAt());
-        response.setUpdatedAt(user.getUpdatedAt());
-        return response;
     }
 }

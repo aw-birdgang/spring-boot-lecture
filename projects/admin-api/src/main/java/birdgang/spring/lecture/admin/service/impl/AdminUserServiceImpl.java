@@ -7,7 +7,6 @@ import birdgang.spring.lecture.database.repository.UserRepository;
 import birdgang.spring.lecture.admin.service.AdminUserService;
 import birdgang.spring.lecture.common.exception.DuplicateResourceException;
 import birdgang.spring.lecture.common.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -21,7 +20,6 @@ public class AdminUserServiceImpl implements AdminUserService {
     
     private final UserRepository userRepository;
     
-    @Autowired
     public AdminUserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

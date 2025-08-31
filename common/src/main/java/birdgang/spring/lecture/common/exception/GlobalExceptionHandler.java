@@ -50,6 +50,27 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
     
+    // ApiVersionException 처리
+    @ExceptionHandler(ApiVersionException.class)
+    public ResponseEntity<ErrorResponse> handleApiVersionException(ApiVersionException e) {
+        Map<String, Object> details = new HashMap<>();
+        if (e.getRequestedVersion() != null) {
+            details.put("requestedVersion", e.getRequestedVersion());
+        }
+        if (e.getSupportedVersions() != null) {
+            details.put("supportedVersions", e.getSupportedVersions());
+        }
+        
+        ErrorResponse error = new ErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            e.getErrorCode(),
+            e.getMessage(),
+            LocalDateTime.now(),
+            details
+        );
+        return ResponseEntity.badRequest().body(error);
+    }
+    
     // IllegalArgumentException 처리
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
@@ -65,7 +86,7 @@ public class GlobalExceptionHandler {
     // Validation 예외 처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e) {
-        Map<String, String> errors = new HashMap<>();
+        Map<String, Object> errors = new HashMap<>();
         e.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();

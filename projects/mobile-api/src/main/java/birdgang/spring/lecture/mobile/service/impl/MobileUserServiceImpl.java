@@ -7,7 +7,6 @@ import birdgang.spring.lecture.database.repository.UserRepository;
 import birdgang.spring.lecture.mobile.service.MobileUserService;
 import birdgang.spring.lecture.common.exception.DuplicateResourceException;
 import birdgang.spring.lecture.common.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +20,6 @@ public class MobileUserServiceImpl implements MobileUserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     
-    @Autowired
     public MobileUserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
