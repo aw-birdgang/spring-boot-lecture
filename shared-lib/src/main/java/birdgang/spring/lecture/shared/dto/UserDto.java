@@ -56,6 +56,7 @@ public class UserDto {
         private String username;
         private String email;
         private String fullName;
+        private boolean active;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
         
@@ -71,6 +72,9 @@ public class UserDto {
         
         public String getFullName() { return fullName; }
         public void setFullName(String fullName) { this.fullName = fullName; }
+        
+        public boolean isActive() { return active; }
+        public void setActive(boolean active) { this.active = active; }
         
         public LocalDateTime getCreatedAt() { return createdAt; }
         public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

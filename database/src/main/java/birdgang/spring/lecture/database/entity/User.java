@@ -32,6 +32,9 @@ public class User {
     @Column(name = "full_name")
     private String fullName;
     
+    @Column(name = "is_active", nullable = false)
+    private boolean active = true;
+    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
@@ -47,6 +50,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.fullName = fullName;
+        this.active = true;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -103,6 +107,14 @@ public class User {
     
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+    
+    public boolean isActive() {
+        return active;
+    }
+    
+    public void setActive(boolean active) {
+        this.active = active;
     }
     
     public LocalDateTime getCreatedAt() {
