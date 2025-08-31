@@ -1,37 +1,43 @@
 package birdgang.spring.lecture;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(HelloController.class)
 class HelloApiTests {
 
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private HelloService helloService;
+
     @Test
-    void helloApi() {
+    void helloApi() throws Exception {
         // http localhost:8080/hello?name=Spring
         // HTTPie
-        TestRestTemplate rest = new TestRestTemplate();
-        ResponseEntity<String> res = rest.getForEntity("http://localhost:8080/hello?name={name}", String.class, "Spring");
-
-        // status code 200
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-        // header(content-type) text/plain
-        assertThat(res.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).startsWith(MediaType.TEXT_PLAIN_VALUE);
-        // body Hello Spring
-        assertThat(res.getBody()).isEqualTo("*Hello Spring*");
+        when(helloService.sayHello("Spring")).thenReturn("*Hello Spring*");
+        
+        mockMvc.perform(get("/hello")
+                .param("name", "Spring"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("content-type", "text/plain;charset=UTF-8"))
+                .andExpect(content().string("*Hello Spring*"));
     }
 
     @Test
-    void falseHelloApi() {
-        // http localhost:8080/hello?name=Spring
+    void falseHelloApi() throws Exception {
+        // http localhost:8080/hello?name=
         // HTTPie
-        TestRestTemplate rest = new TestRestTemplate();
-        ResponseEntity<String> res = rest.getForEntity("http://localhost:8080/hello?name=", String.class);
-
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        mockMvc.perform(get("/hello")
+                .param("name", ""))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid name parameter"));
     }
 }
