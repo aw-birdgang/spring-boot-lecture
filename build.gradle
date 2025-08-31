@@ -30,12 +30,51 @@ subprojects {
 // Spring Boot 애플리케이션 모듈들
 project(':projects:mobile-api') {
 	apply plugin: 'org.springframework.boot'
+	
+	// 환경별 빌드 태스크
+	task bootRunDev(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+		args = ['--spring.profiles.active=dev']
+	}
+	
+	task bootRunStaging(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+		args = ['--spring.profiles.active=staging']
+	}
+	
+	task bootRunProd(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+		args = ['--spring.profiles.active=prod']
+	}
 }
 
 project(':projects:web-api') {
 	apply plugin: 'org.springframework.boot'
+	
+	// 환경별 빌드 태스크
+	task bootRunDev(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+		args = ['--spring.profiles.active=dev']
+	}
+	
+	task bootRunStaging(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+		args = ['--spring.profiles.active=staging']
+	}
+	
+	task bootRunProd(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+		args = ['--spring.profiles.active=prod']
+	}
 }
 
 project(':projects:admin-api') {
 	apply plugin: 'org.springframework.boot'
+	
+	// 환경별 빌드 태스크
+	task bootRunDev(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+		args = ['--spring.profiles.active=dev']
+	}
+	
+	task bootRunStaging(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+		args = ['--spring.profiles.active=staging']
+	}
+	
+	task bootRunProd(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+		args = ['--spring.profiles.active=prod']
+	}
 }

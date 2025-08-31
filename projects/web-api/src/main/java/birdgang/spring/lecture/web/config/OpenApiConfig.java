@@ -1,4 +1,4 @@
-package birdgang.spring.lecture.common.config;
+package birdgang.spring.lecture.web.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -13,12 +13,12 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
     
-    @Bean
+    @Bean("webOpenAPI")
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Spring Boot Lecture API")
-                        .description("Spring Boot 강의용 API 문서")
+                        .title("Web API - Spring Boot Lecture")
+                        .description("웹 애플리케이션을 위한 API 문서")
                         .version("1.0.0")
                         .contact(new Contact()
                                 .name("BirdGang")
@@ -29,14 +29,14 @@ public class OpenApiConfig {
                                 .url("https://opensource.org/licenses/MIT")))
                 .servers(List.of(
                         new Server()
-                                .url("http://localhost:8081")
-                                .description("Mobile API Server"),
+                                .url("http://localhost:8082/dev")
+                                .description("Web API Server (Dev)"),
                         new Server()
-                                .url("http://localhost:8082")
-                                .description("Web API Server"),
+                                .url("http://localhost:9082/staging")
+                                .description("Web API Server (Staging)"),
                         new Server()
-                                .url("http://localhost:8083")
-                                .description("Admin API Server")
+                                .url("http://localhost:10082/prod")
+                                .description("Web API Server (Prod)")
                 ));
     }
 }

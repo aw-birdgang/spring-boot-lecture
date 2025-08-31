@@ -1,6 +1,11 @@
 #!/bin/bash
 
-echo "🚀 Spring Boot Lecture - 모든 API 시작 중..."
+echo "🚀 Spring Boot Lecture - 모든 API 시작 중... (기본: 개발 환경)"
+echo "💡 환경별 실행을 원하시면 다음 스크립트를 사용하세요:"
+echo "   ./scripts/start-dev-apis.sh     (개발 환경)"
+echo "   ./scripts/start-staging-apis.sh (스테이징 환경)"
+echo "   ./scripts/start-prod-apis.sh    (운영 환경)"
+echo ""
 
 # Mobile API 시작
 echo "📱 Mobile API 시작 중... (포트: 8081)"
